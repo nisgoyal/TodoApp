@@ -33,6 +33,7 @@ type taskItems = {
 
 
 class RootViewModel {
+    restServerURLTasks: string;
     dataArray: ko.ObservableArray<any>;
     dataprovider: ArrayDataProvider<any, any>;
 
@@ -43,6 +44,8 @@ class RootViewModel {
 
     constructor() {
 
+        this.restServerURLTasks = "http://localhost:8080/task";
+
         this.taskTitle = ko.observable(null);
         this.taskDesc = ko.observable(null);
         this.taskDueDate = ko.observable(null);
@@ -52,13 +55,29 @@ class RootViewModel {
             keyAttributes: 'id',
             implicitSort: [{ attribute: 'id', direction: 'ascending' }]
         });
+
+        this.fetchRows();
+    }
+
+    fetchRows = async () => {
+        fetch(this.restServerURLTasks).then(res => {
+            if (res.ok) {
+              res.json().then(resJson => {
+                this.dataArray.removeAll();
+                resJson.forEach((element: taskItems) => {
+                    this.dataArray.push(element);
+                });
+                this.dataArray.sort((t1, t2) => {return t1.id - t2.id});
+              });
+            }
+        });
     }
 
     showAddDialog = (event: ojButtonEventMap["ojAction"]) => {
         (document.getElementById("addDialog") as ojDialog).open();
     }
 
-    public createTask = async (event: ojButtonEventMap["ojAction"]) => {
+    createTask = async (event: ojButtonEventMap["ojAction"]) => {
         (document.getElementById("addDialog") as ojDialog).close();
     }
 

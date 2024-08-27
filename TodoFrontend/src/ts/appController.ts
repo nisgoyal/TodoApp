@@ -78,6 +78,31 @@ class RootViewModel {
     }
 
     createTask = async (event: ojButtonEventMap["ojAction"]) => {
+        const row = {
+            title: this.taskTitle(),
+            description: this.taskDesc(),
+            dueDate: this.taskDueDate()?.substring(0, this.taskDueDate()?.length as number - 6) + 'Z',
+        };
+
+        fetch(this.restServerURLTasks, {
+            headers: new Headers({
+            "Content-type": "application/json; charset=UTF-8",
+            }),
+            body: JSON.stringify(row),
+            method: "POST",
+        }).then((res) => {
+            if (res.ok) {
+                console.log("Data added successfully");
+                res.json().then(
+                    (addedRow) => {
+                        this.dataArray.push({...addedRow});
+                    }
+                )
+            }
+            else {
+                console.log("Error adding data!");
+            }
+        });
         (document.getElementById("addDialog") as ojDialog).close();
     }
 

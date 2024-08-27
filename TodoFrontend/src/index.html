@@ -24,6 +24,7 @@
   ***************************** IMPORTANT INFORMATION ************************************ -->
 <html lang="en-us">
   <head>
+    <link rel="stylesheet" href="css/app.css" type="text/css"/>
     <title>Oracle JET Starter Template - Web Blank</title>
     <meta http-equiv="x-ua-compatible" content="IE=edge"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -57,9 +58,96 @@
     <!-- This injects script tags for the main javascript files -->
 		<!-- injector:scripts -->
 		<!-- endinjector -->
+
+    <div id="globalBody" class="oj-web-applayout-page">
+      <header role="banner" class="oj-web-applayout-header">
+        <div class="oj-web-applayout-max-width oj-flex-bar">
+          <h1>TODO Application</h1>
+        </div>
+      </header>
+
+      <div class="oj-flex">
+        <oj-button
+          class="oj-sm-margin-1x"
+          id="addButton"
+          display="icons"
+          chroming="solid">
+            Add Task
+        </oj-button>
+        
+        <oj-button
+          class="oj-sm-margin-1x"
+          id="deleteButton"
+          display="icons"
+          chroming="solid">
+            Delete Tasks
+        </oj-button>
+      </div>
+
+      <div id="tableDiv" class="oj-panel">
+          <oj-table
+            id="table"
+            aria-label="Departments Table"
+            accessibility.row-header="depName"
+            data="[[dataprovider]]"
+            selection-mode='{"row": "multiple", "column": "none"}'
+            dnd='{"reorder": {"columns": "enabled"}}'
+            scroll-policy="loadMoreOnScroll"
+            scroll-policy-options='{"fetchSize": 10}'
+            columns='[{"headerText": "Task Id", 
+                       "field": "id",
+                       "headerClassName": "oj-sm-only-hide",
+                       "className": "oj-sm-only-hide",
+                       "resizable": "enabled",
+                       "id": "taskId"},
+                      {"headerText": "Task Title", 
+                       "field": "title",
+                       "resizable": "enabled",
+                       "id": "taskName"},
+                      {"headerText": "Task Description", 
+                       "field": "description",
+                       "resizable": "enabled",
+                       "id": "taskDesc"},
+                       {"headerText": "Due Date", 
+                       "field": "dueDate",
+                       "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide",
+                       "resizable": "enabled",
+                       "id": "dueDate"},
+                      {"headerText": "Action", 
+                       "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide",
+                       "id": "action",
+                       "template": "actionTemplate"}]'
+            class="demo-table-container">
+
+            <template slot="actionTemplate" data-oj-as="cell">
+              <oj-menu-button id="menuButton5" display="icons" chroming="borderless">
+                Action
+                <oj-menu id="myMenu5" slot="menu">
+                  <oj-option
+                    value="edit"
+                    data-oj-clickthrough="disabled"
+                  >
+                    Edit
+                  </oj-option>
+                  <oj-option
+                    value="delete"
+                    data-oj-clickthrough="disabled"
+                  >
+                    Delete
+                  </oj-option>
+                </oj-menu>
+              </oj-menu-button>
+
+            </template>
+          </oj-table>  
+      </div>
+      <footer class="oj-web-applayout-footer" role="contentinfo">
+      </footer>
+    </div>
+
   
-<script src="swinit.js"></script>
-
-
-</body>
+    <script src="swinit.js"></script>
+  </body>
 </html>

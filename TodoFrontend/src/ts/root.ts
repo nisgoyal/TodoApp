@@ -7,10 +7,14 @@
  */
 import * as ko from "knockout";
 import { whenDocumentReady } from "ojs/ojbootstrap";
+import rootViewModel from './appController'; 
 import "ojs/ojknockout";
+import "ojs/ojmodule";
 import Context = require("ojs/ojcontext");
 
-function init() {}
+function init() {
+  ko.applyBindings(rootViewModel, document.getElementById("globalBody"))
+}
     
 whenDocumentReady().then(function () {
   // if running in a hybrid (e.g. Cordova) environment, we need to wait for the deviceready

@@ -80,6 +80,30 @@ class RootViewModel {
     };
 
 
+    deleteSelectedRows = () => {
+        const tableComponent = document.getElementById('table') as ojTable<
+            taskItems['id'], 
+            taskItems
+        >;
+        
+        if ((tableComponent.selected.row as AllKeySetImpl<number>).keys.all) {
+            // all selected
+            this.dataArray().forEach((item) => {
+                this.removeRow(item.id);
+            });
+        }
+        else {
+            let keySet = (tableComponent.selected.row as AllKeySetImpl<number>).keys.keys?.values();
+            let next = -1 as any;
+            while( (next = keySet?.next())?.done === false ) {
+                if (next !== undefined) {
+                    this.removeRow(next.value);
+                }
+            }
+        }
+    }
+
+
     fetchRows = async () => {
         fetch(this.restServerURLTasks).then(res => {
             if (res.ok) {

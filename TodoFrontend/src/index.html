@@ -125,7 +125,7 @@
             <template slot="actionTemplate" data-oj-as="cell">
               <oj-menu-button id="menuButton5" display="icons" chroming="borderless">
                 Action
-                <oj-menu id="myMenu5" slot="menu">
+                <oj-menu id="myMenu5" slot="menu" on-oj-menu-action="[[menuListener]]">
                   <oj-option
                     value="edit"
                     data-oj-clickthrough="disabled"

@@ -59,6 +59,27 @@ class RootViewModel {
         this.fetchRows();
     }
 
+
+    menuListener = (
+        event: ojMenuEventMap["ojMenuAction"],
+        context: ojTable.CellTemplateContext<taskItems["id"], taskItems>
+    ) => {
+        const tableComponent = document.getElementById('table') as ojTable<
+            taskItems['id'],
+            taskItems
+        >;
+        const currentRow = tableComponent.currentRow;
+        if (event.detail.selectedValue === 'delete') {
+            if (currentRow?.rowIndex !== undefined && currentRow?.rowKey !== undefined){
+                this.removeRow(currentRow?.rowKey);
+            }
+        }
+        else if (event.detail.selectedValue === 'edit') {
+            console.log("EDIT")
+        }
+    };
+
+
     fetchRows = async () => {
         fetch(this.restServerURLTasks).then(res => {
             if (res.ok) {
@@ -104,6 +125,25 @@ class RootViewModel {
             }
         });
         (document.getElementById("addDialog") as ojDialog).close();
+    }
+
+    removeRow = async (rowKey: number) => {
+        fetch(
+            this.restServerURLTasks + `/${rowKey}`,
+            {
+                method: 'DELETE'
+            }
+        ).then((res) => {
+            if (res.ok) {
+                console.log("deleted successfully! ", rowKey)
+                this.dataArray.remove((task: taskItems) => {
+                    return task.id === rowKey
+                });
+            }
+            else {
+                console.log("delete failed");
+            }
+        });
     }
 
 }

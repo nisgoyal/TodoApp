@@ -36,14 +36,32 @@ class RootViewModel {
     dataArray: ko.ObservableArray<any>;
     dataprovider: ArrayDataProvider<any, any>;
 
+    // Add dialog fields
+    taskTitle: ko.Observable<string | null>;
+    taskDesc: ko.Observable<string | null>;
+    taskDueDate: ko.Observable<string | null>;
+
     constructor() {
+
+        this.taskTitle = ko.observable(null);
+        this.taskDesc = ko.observable(null);
+        this.taskDueDate = ko.observable(null);
+
         this.dataArray = ko.observableArray();
         this.dataprovider = new ArrayDataProvider(this.dataArray, {
             keyAttributes: 'id',
             implicitSort: [{ attribute: 'id', direction: 'ascending' }]
         });
     }
-    
+
+    showAddDialog = (event: ojButtonEventMap["ojAction"]) => {
+        (document.getElementById("addDialog") as ojDialog).open();
+    }
+
+    public createTask = async (event: ojButtonEventMap["ojAction"]) => {
+        (document.getElementById("addDialog") as ojDialog).close();
+    }
+
 }
 
 export default new RootViewModel();

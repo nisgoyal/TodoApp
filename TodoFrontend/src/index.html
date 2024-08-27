@@ -71,7 +71,8 @@
           class="oj-sm-margin-1x"
           id="addButton"
           display="icons"
-          chroming="solid">
+          chroming="solid"
+          on-oj-action="[[showAddDialog]]">
             Add Task
         </oj-button>
         
@@ -143,6 +144,20 @@
             </template>
           </oj-table>  
       </div>
+
+      <oj-dialog id="addDialog" style="display: none" dialog-title="Add New Task" cancel-behavior="icon">
+        <div slot="body">
+          <oj-label class="oj-label" for="taskTitle">Task Title</oj-label>
+          <oj-c-input-text id="taskTitle" value="{{taskTitle}}" label-hint=""></oj-c-input-text>
+          <oj-label class="oj-label" for="taskDesc">Task Description</oj-label>
+          <oj-c-input-text id="taskDesc" value="{{taskDesc}}" label-hint=""></oj-c-input-text>
+          <oj-label class="oj-label" for="dueDate">Due Date</oj-label>
+          <oj-input-date-time id="dueDate"  value="{{taskDueDate}}" label-hint=""></oj-input-date-time>
+        </div>
+        <div slot="footer">
+          <oj-c-button id="submitBtn" on-oj-action="[[createTask]]" label="Submit"></oj-c-button>
+        </div>
+      </oj-dialog>
       <footer class="oj-web-applayout-footer" role="contentinfo">
       </footer>
     </div>

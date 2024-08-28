@@ -81,6 +81,7 @@ class RootViewModel {
 
         this.fetchRows();
         this.searchValue.subscribe(this.filterTaskTable);
+        this.dataArray.subscribe(this.filterTaskTable);
     }
 
 

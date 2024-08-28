@@ -6,8 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import java.time.LocalDateTime;
-
 @Entity
 public class Task {
 
@@ -16,7 +14,7 @@ public class Task {
     private Long id;
     private String title;
     private String description;
-    private LocalDateTime dueDate;
+    private String dueDate;
 
     public Task() {}
 
@@ -44,11 +42,11 @@ public class Task {
         this.description = description;
     }
 
-    public LocalDateTime getDueDate() {
+    public String getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
+    public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
     }
 }

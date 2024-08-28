@@ -160,6 +160,23 @@
           <oj-c-button id="submitBtn" on-oj-action="[[createTask]]" label="Submit"></oj-c-button>
         </div>
       </oj-dialog>
+
+
+      <oj-dialog id="editDialog" style="display: none" dialog-title="Edit Task" cancel-behavior="icon">
+        <div slot="body">
+          <oj-label class="oj-label" for="editTaskId">Task Id</oj-label>
+          <oj-c-input-text id="editTaskId" value="[[editTaskId]]" label-hint="" readonly="true"></oj-c-input-text>
+          <oj-label class="oj-label" for="editTaskTitle">Task Title</oj-label>
+          <oj-c-input-text id="editTaskTitle" value="{{editTaskTitle}}" label-hint=""></oj-c-input-text>
+          <oj-label class="oj-label" for="editTaskDesc">Task Description</oj-label>
+          <oj-c-input-text id="editTaskDesc" value="{{editTaskDesc}}" label-hint=""></oj-c-input-text>
+          <oj-label class="oj-label" for="editTaskDueDate">Due Date</oj-label>
+          <oj-input-date-time id="editTaskDueDate"  value="{{editTaskDueDate}}" label-hint=""></oj-input-date-time>
+        </div>
+        <div slot="footer">
+          <oj-c-button id="submitBtn" on-oj-action="[[editTask]]" label="Submit"></oj-c-button>
+        </div>
+      </oj-dialog>
       <footer class="oj-web-applayout-footer" role="contentinfo">
       </footer>
     </div>

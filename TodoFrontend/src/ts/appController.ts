@@ -28,7 +28,7 @@ type taskItems = {
     id: number;
     title: string;
     description: string;
-    dueDate: Date;
+    dueDate: string;
 }
 
 
@@ -42,6 +42,13 @@ class RootViewModel {
     taskDesc: ko.Observable<string | null>;
     taskDueDate: ko.Observable<string | null>;
 
+    // Edit dialog fields
+    editTaskIndex: number;
+    editTaskId: ko.Observable<number | null>;
+    editTaskTitle: ko.Observable<string | null>;
+    editTaskDesc: ko.Observable<string | null>;
+    editTaskDueDate: ko.Observable<string | null>;
+
     constructor() {
 
         this.restServerURLTasks = "http://localhost:8080/task";
@@ -50,6 +57,12 @@ class RootViewModel {
         this.taskDesc = ko.observable(null);
         this.taskDueDate = ko.observable(null);
 
+        this.editTaskIndex = -1;
+        this.editTaskId = ko.observable(null);
+        this.editTaskTitle = ko.observable(null);
+        this.editTaskDesc = ko.observable(null);
+        this.editTaskDueDate = ko.observable(null);
+
         this.dataArray = ko.observableArray();
         this.dataprovider = new ArrayDataProvider(this.dataArray, {
             keyAttributes: 'id',
@@ -57,6 +70,36 @@ class RootViewModel {
         });
 
         this.fetchRows();
+    }
+
+    isoToOjetFormat = (isoDateString: string) => {
+        // Convert to Date object
+        var dateObj = new Date(isoDateString);
+
+        // Get the timezone offset in minutes and convert it to hours and minutes
+        var timezoneOffset = -dateObj.getTimezoneOffset();
+        var offsetHours = Math.floor(Math.abs(timezoneOffset) / 60);
+        var offsetMinutes = Math.abs(timezoneOffset) % 60;
+        var offsetSign = timezoneOffset >= 0 ? '+' : '-';
+
+        // Format hours and minutes with leading zeros if necessary
+        var offsetHoursStr = offsetHours.toString().padStart(2, '0');
+        var offsetMinutesStr = offsetMinutes.toString().padStart(2, '0');
+
+        // Construct the timezone offset string
+        var timezoneOffsetString = `${offsetSign}${offsetHoursStr}:${offsetMinutesStr}`;
+
+        // Format date to "YYYY-MM-DDTHH:mm:ss"
+        var formattedDate = dateObj.getFullYear() +
+            '-' + (dateObj.getMonth() + 1).toString().padStart(2, '0') +
+            '-' + dateObj.getDate().toString().padStart(2, '0') +
+            'T' + dateObj.getHours().toString().padStart(2, '0') +
+            ':' + dateObj.getMinutes().toString().padStart(2, '0') +
+            ':' + dateObj.getSeconds().toString().padStart(2, '0');
+
+        // Combine the formatted date and the timezone offset
+        var ojDateTimePickerFormat = `${formattedDate}${timezoneOffsetString}`;
+        return ojDateTimePickerFormat;
     }
 
 
@@ -76,6 +119,9 @@ class RootViewModel {
         }
         else if (event.detail.selectedValue === 'edit') {
             console.log("EDIT")
+            if(currentRow?.rowKey !== undefined) {
+                this.showEditDialog(currentRow?.rowKey);
+            }
         }
     };
 
@@ -110,7 +156,11 @@ class RootViewModel {
               res.json().then(resJson => {
                 this.dataArray.removeAll();
                 resJson.forEach((element: taskItems) => {
-                    this.dataArray.push(element);
+                    this.dataArray.push(
+                        {
+                            ...element,
+                        }
+                    );
                 });
                 this.dataArray.sort((t1, t2) => {return t1.id - t2.id});
               });
@@ -119,15 +169,71 @@ class RootViewModel {
     }
 
     showAddDialog = (event: ojButtonEventMap["ojAction"]) => {
+        this.taskTitle(null);
+        this.taskDesc(null);
+        this.taskDueDate(null);
         (document.getElementById("addDialog") as ojDialog).open();
+    }
+
+    showEditDialog = (rowKey: number) => {
+        let rowIndex = -1;
+        this.dataArray().forEach((item: taskItems, index: number) => {
+            if (item.id === rowKey) {
+                rowIndex = index;
+            }
+        });
+        if (rowIndex !== -1) {
+            let taskItem = this.dataArray()[rowIndex] as taskItems;
+            this.editTaskIndex = rowIndex;
+            this.editTaskId(taskItem.id);
+            this.editTaskTitle(taskItem.title);
+            this.editTaskDesc(taskItem.description);
+            this.editTaskDueDate(this.isoToOjetFormat(taskItem.dueDate));
+            (document.getElementById("editDialog") as ojDialog).open();
+        }
+    }
+
+    editTask = async (event: ojButtonEventMap["ojAction"]) => {
+        const row = {
+            id: this.editTaskId(),
+            title: this.editTaskTitle(),
+            description: this.editTaskDesc(),
+            dueDate: new Date(this.editTaskDueDate() as string).toISOString(),
+        };
+
+        console.log(row, this.editTaskDueDate());
+
+        fetch(this.restServerURLTasks + `/${this.editTaskId()}`, {
+            headers: new Headers({
+            "Content-type": "application/json; charset=UTF-8",
+            }),
+            body: JSON.stringify(row),
+            method: "PUT",
+        }).then((res) => {
+            if (res.ok) {
+                console.log("Data updated successfully");
+                this.dataArray.replace(
+                    this.dataArray()[this.editTaskIndex],
+                    {
+                        ...row,
+                    }
+                );
+            }
+            else {
+                console.log("Error updating data!");
+            }
+        });
+        (document.getElementById("editDialog") as ojDialog).close();
     }
 
     createTask = async (event: ojButtonEventMap["ojAction"]) => {
         const row = {
             title: this.taskTitle(),
             description: this.taskDesc(),
-            dueDate: this.taskDueDate()?.substring(0, this.taskDueDate()?.length as number - 6) + 'Z',
+            dueDate: new Date(this.taskDueDate() as string).toISOString(),
         };
+
+        console.log(row);
 
         fetch(this.restServerURLTasks, {
             headers: new Headers({
@@ -139,8 +245,11 @@ class RootViewModel {
             if (res.ok) {
                 console.log("Data added successfully");
                 res.json().then(
-                    (addedRow) => {
-                        this.dataArray.push({...addedRow});
+                    (addedRow: taskItems) => {
+                        console.log(addedRow);
+                        this.dataArray.push({
+                            ...addedRow,
+                        });
                     }
                 )
             }

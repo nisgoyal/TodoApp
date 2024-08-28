@@ -36,6 +36,7 @@ class RootViewModel {
     restServerURLTasks: string;
     dataArray: ko.ObservableArray<any>;
     dataprovider: ArrayDataProvider<any, any>;
+    filteredDataArray: ko.ObservableArray<any>;
 
     // Add dialog fields
     taskTitle: ko.Observable<string | null>;
@@ -49,7 +50,15 @@ class RootViewModel {
     editTaskDesc: ko.Observable<string | null>;
     editTaskDueDate: ko.Observable<string | null>;
 
+    // search fields
+    searchValue: ko.Observable<string | null>;
+    searchRawValue: ko.Observable<string | null>;
+
+
     constructor() {
+
+        this.searchValue = ko.observable(null);
+        this.searchRawValue = ko.observable(null);
 
         this.restServerURLTasks = "http://localhost:8080/task";
 
@@ -64,13 +73,30 @@ class RootViewModel {
         this.editTaskDueDate = ko.observable(null);
 
         this.dataArray = ko.observableArray();
-        this.dataprovider = new ArrayDataProvider(this.dataArray, {
+        this.filteredDataArray = ko.observableArray();
+        this.dataprovider = new ArrayDataProvider(this.filteredDataArray, {
             keyAttributes: 'id',
             implicitSort: [{ attribute: 'id', direction: 'ascending' }]
         });
 
         this.fetchRows();
+        this.searchValue.subscribe(this.filterTaskTable);
     }
+
+
+    filterTaskTable = () => {
+        if(this.searchValue() === null || this.searchValue() === "") {
+            this.filteredDataArray(this.dataArray());
+        }
+        else {
+            this.filteredDataArray(ko.utils.arrayFilter(this.dataArray(), (task: taskItems) => {
+                return task.title.includes(this.searchValue() as string) ||
+                    task.description.includes(this.searchValue() as string) ||
+                    task.id.toString().includes(this.searchValue() as string);
+            }));
+        }
+    }
+
 
     isoToOjetFormat = (isoDateString: string) => {
         // Convert to Date object
@@ -118,7 +144,6 @@ class RootViewModel {
             }
         }
         else if (event.detail.selectedValue === 'edit') {
-            console.log("EDIT")
             if(currentRow?.rowKey !== undefined) {
                 this.showEditDialog(currentRow?.rowKey);
             }
@@ -163,6 +188,7 @@ class RootViewModel {
                     );
                 });
                 this.dataArray.sort((t1, t2) => {return t1.id - t2.id});
+                this.filterTaskTable();
               });
             }
         });
@@ -201,8 +227,6 @@ class RootViewModel {
             dueDate: new Date(this.editTaskDueDate() as string).toISOString(),
         };
 
-        console.log(row, this.editTaskDueDate());
-
         fetch(this.restServerURLTasks + `/${this.editTaskId()}`, {
             headers: new Headers({
             "Content-type": "application/json; charset=UTF-8",
@@ -233,8 +257,6 @@ class RootViewModel {
             dueDate: new Date(this.taskDueDate() as string).toISOString(),
         };
 
-        console.log(row);
-
         fetch(this.restServerURLTasks, {
             headers: new Headers({
             "Content-type": "application/json; charset=UTF-8",
@@ -246,7 +268,6 @@ class RootViewModel {
                 console.log("Data added successfully");
                 res.json().then(
                     (addedRow: taskItems) => {
-                        console.log(addedRow);
                         this.dataArray.push({
                             ...addedRow,
                         });

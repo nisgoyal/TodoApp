@@ -1,10 +1,11 @@
 package com.practice.todobackend.task;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.practice.todobackend.tag.Tag;
+import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Task {
@@ -15,6 +16,9 @@ public class Task {
     private String title;
     private String description;
     private String dueDate;
+
+    @ManyToMany
+    private Set<Tag> tags = new HashSet<>();
 
     public Task() {}
 
@@ -48,5 +52,13 @@ public class Task {
 
     public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }

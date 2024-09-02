@@ -1,16 +1,21 @@
 package com.practice.todobackend.task;
 
+import com.practice.todobackend.tag.Tag;
+import com.practice.todobackend.tag.TagRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final TagRepository tagRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, TagRepository tagRepository) {
         this.taskRepository = taskRepository;
+        this.tagRepository = tagRepository;
     }
 
     public List<Task> getAllTasks() {
@@ -22,6 +27,14 @@ public class TaskService {
     }
 
     public Task saveTask(Task task) {
+
+        Set<Tag> tags = task.getTags();
+        tags.forEach(tag -> {
+            if(tagRepository.findById(tag.getName()).isEmpty()) {
+                tagRepository.save(tag);
+            }
+        });
+
         return taskRepository.save(task);
     }
 
@@ -41,6 +54,13 @@ public class TaskService {
             taskToUpdate.setTitle(task.getTitle());
             taskToUpdate.setDescription(task.getDescription());
             taskToUpdate.setDueDate(task.getDueDate());
+
+            for (Tag tag : task.getTags()) {
+                if(tagRepository.findById(tag.getName()).isEmpty()) {
+                    tagRepository.save(tag);
+                }
+            }
+            taskToUpdate.setTags(task.getTags());
             taskRepository.save(taskToUpdate);
 
             return true;

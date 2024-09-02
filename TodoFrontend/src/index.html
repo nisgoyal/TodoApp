@@ -104,9 +104,6 @@
             accessibility.row-header="depName"
             data="[[dataprovider]]"
             selection-mode='{"row": "multiple", "column": "none"}'
-            dnd='{"reorder": {"columns": "enabled"}}'
-            scroll-policy="loadMoreOnScroll"
-            scroll-policy-options='{"fetchSize": 10}'
             columns='[{"headerText": "Task Id", 
                        "field": "id",
                        "headerClassName": "oj-sm-only-hide",
@@ -127,6 +124,13 @@
                        "className": "oj-md-down-hide",
                        "resizable": "enabled",
                        "id": "dueDate"},
+                       {"headerText": "Tags", 
+                       "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide",
+                       "id": "tags",
+                       "field": "tags",
+                       "resizable": "enabled",
+                       "template": "tagsTemplate"},
                       {"headerText": "Action", 
                        "headerClassName": "oj-md-down-hide",
                        "className": "oj-md-down-hide",
@@ -154,9 +158,66 @@
               </oj-menu-button>
 
             </template>
+
+            <template slot="tagsTemplate" data-oj-as="cell">
+              <oj-if test="[[tagFieldKey() !== cell.key]]">
+                <oj-bind-for-each data="[[$current.data]]">
+                  <template>
+                    <span class="oj-badge oj-badge-danger oj-badge-subtle"><oj-bind-text value="[[$current.data.name]]"></oj-bind-text></span>
+                  </template>
+                </oj-bind-for-each>
+                <oj-button id="icon_button1" display="all" label="&#8853;" class="oj-button-sm" on-oj-action="[[() => {enableTagEdit(cell)}]]"
+                data-oj-clickthrough="disabled" chroming="borderless">
+                  <span slot="startIcon" class="oj-ux-ico-information"></span>
+                </oj-button>
+              </oj-if>
+              <oj-if test="[[tagFieldKey() === cell.key]]">
+                <div class="oj-flex">
+                  <div class="oj-sm-6 oj-md-12 oj-lg-9 oj-flex-item">
+                    <oj-combobox-many
+                      id="combobox"
+                      label-hint="tag"
+                      value="{{tagFieldValue}}"
+                      options="[[tagDataProvider]]">
+                    </oj-combobox-many>
+                  </div>
+                  <div class="oj-flex-item">
+                    <oj-button id="icon_button1" display="icons" label="" class="oj-button-sm"
+                      data-oj-clickthrough="disabled" on-oj-action="[[submitTagEdit]]">
+                      <span slot="startIcon" class="oj-ux-ico-information"></span>
+                    </oj-button>
+                  </div>
+                  <div class="oj-flex-item">
+                  <oj-button id="icon_button1" display="icons" label="" class="oj-button-sm"
+                    data-oj-clickthrough="disabled" on-oj-action="[[cancelTagEdit]]">
+                      <span slot="startIcon" class="oj-ux-ico-information"></span>
+                  </oj-button>
+                  </div>
+                </div>
+              </oj-if>
+            </template>
           </oj-table>  
       </div>
 
+      <!-- <oj-dialog id="tagDialog" style="display: none" dialog-title="Add Tag" cancel-behavior="icon">
+        <div slot="body">
+          <oj-label class="oj-label" for="tag">Tag</oj-label>
+            <oj-combobox-many
+                id="combobox"
+                label-hint="tag"
+                class="oj-form-control-max-width-md">
+                <oj-option value="Internet Explorer">Internet Explorer</oj-option>
+                <oj-option value="Firefox">Firefox</oj-option>
+                <oj-option value="Chrome">Chrome</oj-option>
+                <oj-option value="Opera">Opera</oj-option>
+                <oj-option value="Safari">Safari</oj-option>
+          </oj-combobox-many>
+        </div>
+        <div slot="footer">
+          <oj-c-button id="submitBtn" on-oj-action="[[createTask]]" label="Submit"></oj-c-button>
+        </div>
+      </oj-dialog> -->
+        
       <oj-dialog id="addDialog" style="display: none" dialog-title="Add New Task" cancel-behavior="icon">
         <div slot="body">
           <oj-label class="oj-label" for="taskTitle">Task Title</oj-label>
@@ -192,6 +253,6 @@
     </div>
 
   
-    <script src="swinit.js"></script>
+    <!-- <script src="swinit.js"></script> -->
   </body>
 </html>

@@ -6,7 +6,6 @@ import "ojs/ojmodule-element";
 import 'ojs/ojtable';
 import ArrayDataProvider = require('ojs/ojarraydataprovider');
 import "oj-c/menu-button";
-import { MenuItems } from 'oj-c/menu-button';
 import "oj-c/button";
 import { ojButtonEventMap } from "ojs/ojbutton";
 import { ojDialog } from "ojs/ojdialog";
@@ -23,6 +22,7 @@ import { ojMenuEventMap } from "ojs/ojmenu";
 import { ojTable } from "ojs/ojtable";
 import 'ojs/ojinputsearch';
 import { KeySetImpl, AllKeySetImpl } from 'ojs/ojkeyset';
+import 'ojs/ojselectcombobox';
 
 type taskItems = {
     id: number;
@@ -54,6 +54,15 @@ class RootViewModel {
     searchValue: ko.Observable<string | null>;
     searchRawValue: ko.Observable<string | null>;
 
+    // show tag field
+    tagFieldKey: ko.Observable<number | null>;
+    tagFieldValue: ko.ObservableArray<string>;
+
+    //
+    restServerURLTags: string;
+    tagArray: ko.ObservableArray<any>;
+    tagDataProvider: ArrayDataProvider<any, any>;
+
 
     constructor() {
 
@@ -79,6 +88,17 @@ class RootViewModel {
             implicitSort: [{ attribute: 'id', direction: 'ascending' }]
         });
 
+        this.tagFieldKey = ko.observable(null);
+        this.tagFieldValue = ko.observableArray();
+
+
+        this.restServerURLTags = "http://localhost:8080/tag";
+        this.tagArray = ko.observableArray();
+        this.tagDataProvider = new ArrayDataProvider(this.tagArray, {
+            keyAttributes: 'name'
+        })
+
+        this.fetchTags();
         this.fetchRows();
         this.searchValue.subscribe(this.filterTaskTable);
         this.dataArray.subscribe(this.filterTaskTable);
@@ -175,6 +195,21 @@ class RootViewModel {
         }
     }
 
+
+    fetchTags = async () => {
+        fetch(this.restServerURLTags).then(res => {
+            if (res.ok) {
+                res.json().then(resJson => {
+                    this.tagArray.removeAll();
+                    resJson.forEach((element: { name: string }) => {
+                        this.tagArray.push(
+                            {'value': element.name}
+                        )
+                    });
+                });
+            }
+        });
+    }
 
     fetchRows = async () => {
         fetch(this.restServerURLTasks).then(res => {
@@ -301,6 +336,71 @@ class RootViewModel {
         });
     }
 
+    enableTagEdit = (cell: any) => {
+        this.tagFieldKey(cell.key);
+        let fieldValue = [] as string[];
+        (cell.data as Array<any>).forEach((item: any) => {
+            fieldValue.push(item.name)
+        });
+        this.tagFieldValue(fieldValue);
+    }
+
+    cancelTagEdit = () => {
+        this.tagFieldKey(null);
+        this.tagFieldValue([]);
+    }
+
+    submitTagEdit = () => {
+        if (this.tagFieldValue()) {
+            let rowIndex = -1;
+            this.dataArray().forEach((item: taskItems, index: number) => {
+                if (item.id === this.tagFieldKey()) {
+                    rowIndex = index;
+                }
+            });
+            let tags = [] as {name: string}[]
+            this.tagFieldValue().forEach((tag: string) => {
+                tags.push(
+                    {
+                        "name": tag
+                    }
+                )
+            });
+            let row = {
+                id: this.tagFieldKey(),
+                title: this.dataArray()[rowIndex].title,
+                description: this.dataArray()[rowIndex].description,
+                dueDate: this.dataArray()[rowIndex].dueDate,
+                tags: tags,
+            };
+            fetch(
+                this.restServerURLTasks + `/${this.tagFieldKey()}`,
+                {
+                    headers: new Headers({
+                        "Content-type": "application/json; charset=UTF-8",
+                    }),
+                    body: JSON.stringify(row),
+                    method: "PUT",
+                }
+            ).then((res) => {
+                if (res.ok) {
+                    console.log("Tags updated successfully");
+                    this.dataArray.replace(
+                        this.dataArray()[rowIndex],
+                        {
+                            ...row,
+                        }
+                    );
+                }
+                else {
+                    console.log("Error updating tags!");
+                }
+            });
+        }
+
+        this.tagFieldKey(null);
+        this.tagFieldValue([]);
+    }
 }
 
 export default new RootViewModel();

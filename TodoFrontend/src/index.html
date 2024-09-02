@@ -25,6 +25,7 @@
 <html lang="en-us">
   <head>
     <link rel="stylesheet" href="css/app.css" type="text/css"/>
+    <link rel="stylesheet" id="uxiconFont" href="https://static.oracle.com/cdn/fnd/gallery/2404.0.0/images/iconfont/ojuxIconFont.min.css">
     <title>Oracle JET Starter Template - Web Blank</title>
     <meta http-equiv="x-ua-compatible" content="IE=edge"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -166,9 +167,9 @@
                     <span class="oj-badge oj-badge-danger oj-badge-subtle"><oj-bind-text value="[[$current.data.name]]"></oj-bind-text></span>
                   </template>
                 </oj-bind-for-each>
-                <oj-button id="icon_button1" display="all" label="&#8853;" class="oj-button-sm" on-oj-action="[[() => {enableTagEdit(cell)}]]"
+                <oj-button id="icon_button1" display="icons" class="oj-button-sm" on-oj-action="[[() => {enableTagEdit(cell)}]]"
                 data-oj-clickthrough="disabled" chroming="borderless">
-                  <span slot="startIcon" class="oj-ux-ico-information"></span>
+                  <span slot="startIcon" class="oj-ux-ico-plus-circle"></span>
                 </oj-button>
               </oj-if>
               <oj-if test="[[tagFieldKey() === cell.key]]">
@@ -176,21 +177,22 @@
                   <div class="oj-sm-6 oj-md-12 oj-lg-9 oj-flex-item">
                     <oj-combobox-many
                       id="combobox"
+                      class="tagCombobox"
                       label-hint="tag"
                       value="{{tagFieldValue}}"
                       options="[[tagDataProvider]]">
                     </oj-combobox-many>
                   </div>
                   <div class="oj-flex-item">
-                    <oj-button id="icon_button1" display="icons" label="" class="oj-button-sm"
-                      data-oj-clickthrough="disabled" on-oj-action="[[submitTagEdit]]">
-                      <span slot="startIcon" class="oj-ux-ico-information"></span>
+                    <oj-button id="icon_button1" display="icons" label="Submit" class="oj-button-sm"
+                      data-oj-clickthrough="disabled" on-oj-action="[[submitTagEdit]]" chroming="borderless">
+                      <span slot="startIcon" class="oj-ux-ico-check"></span>
                     </oj-button>
                   </div>
                   <div class="oj-flex-item">
-                  <oj-button id="icon_button1" display="icons" label="" class="oj-button-sm"
-                    data-oj-clickthrough="disabled" on-oj-action="[[cancelTagEdit]]">
-                      <span slot="startIcon" class="oj-ux-ico-information"></span>
+                  <oj-button id="icon_button1" display="icons" label="Cancel" class="oj-button-sm"
+                    data-oj-clickthrough="disabled" on-oj-action="[[cancelTagEdit]]" chroming="borderless">
+                      <span slot="startIcon" class="oj-ux-ico-cancel-s"></span>
                   </oj-button>
                   </div>
                 </div>

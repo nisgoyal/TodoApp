@@ -24,11 +24,16 @@ import 'ojs/ojinputsearch';
 import { KeySetImpl, AllKeySetImpl } from 'ojs/ojkeyset';
 import 'ojs/ojselectcombobox';
 
+type tagItem = {
+    name: string;
+}
+
 type taskItems = {
     id: number;
     title: string;
     description: string;
     dueDate: string;
+    tags: { name: string }[];
 }
 
 
@@ -111,7 +116,15 @@ class RootViewModel {
         }
         else {
             this.filteredDataArray(ko.utils.arrayFilter(this.dataArray(), (task: taskItems) => {
-                return task.title.includes(this.searchValue() as string) ||
+
+                let presentInTag = false;
+                task.tags.forEach((tag: tagItem) => {
+                    if (tag.name.includes(this.searchValue() as string)) {
+                        presentInTag = true;
+                    }
+                });
+
+                return presentInTag || task.title.includes(this.searchValue() as string) ||
                     task.description.includes(this.searchValue() as string) ||
                     task.id.toString().includes(this.searchValue() as string);
             }));

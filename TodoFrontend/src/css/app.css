@@ -2,3 +2,33 @@
     border-style: solid;
     border-width: 1px;
 }
+
+.custom-badge-purple-subtle {
+    --oj-badge-bg-color: rgb(247, 230, 255);
+    --oj-badge-text-color: purple;
+}
+
+.custom-badge-pink-subtle {
+    --oj-badge-bg-color: rgb(255, 230, 242);
+    --oj-badge-text-color: rgb(204, 0, 99);
+}
+
+.custom-badge-teal-subtle {
+    --oj-badge-bg-color: rgb(234, 255, 255);
+    --oj-badge-text-color: rgb(0, 128, 128);
+}
+
+.custom-badge-red-subtle {
+    --oj-badge-bg-color: rgb(226, 50, 50);
+    --oj-badge-text-color: white;
+}
+
+.custom-badge-yellow-subtle {
+    --oj-badge-bg-color: rgb(236, 243, 194);
+    --oj-badge-text-color: black;
+}
+
+.custom-badge-green-subtle {
+    --oj-badge-bg-color: rgb(157, 222, 172);
+    --oj-badge-text-color: rgb(3, 74, 3);
+}

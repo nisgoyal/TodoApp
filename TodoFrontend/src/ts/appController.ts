@@ -67,6 +67,7 @@ class RootViewModel {
     restServerURLTags: string;
     tagArray: ko.ObservableArray<any>;
     tagDataProvider: ArrayDataProvider<any, any>;
+    tagColors: ko.Observable<{ [key:string]: string }>;
 
     searchType: ko.Observable<string>;
 
@@ -107,11 +108,34 @@ class RootViewModel {
         this.tagDataProvider = new ArrayDataProvider(this.tagArray, {
             keyAttributes: 'name'
         })
+        this.tagColors = ko.observable({} as {[key: string]: string});
 
         this.fetchTags();
         this.fetchRows();
         this.searchValue.subscribe(this.filterTaskTable);
         this.dataArray.subscribe(this.filterTaskTable);
+    }
+    
+    getClassBasedOnName = (name: string) => {
+        let possibleClasses = [
+            'custom-badge-pink-subtle',
+            'custom-badge-purple-subtle',
+            'custom-badge-teal-subtle',
+            'custom-badge-red-subtle',
+            'custom-badge-yellow-subtle',
+            'custom-badge-green-subtle',
+        ];
+
+        if (this.tagColors()) {
+            if (this.tagColors()[name] === undefined) {
+                let randomColor = possibleClasses[Math.floor((Math.random()*possibleClasses.length))];
+                this.tagColors()[name] = randomColor;
+                return randomColor;
+            }
+            else {
+                return this.tagColors()[name];
+            }
+        }
     }
 
 

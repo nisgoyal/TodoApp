@@ -134,6 +134,7 @@
                        "headerClassName": "oj-md-down-hide",
                        "className": "oj-md-down-hide",
                        "id": "tags",
+                       "minWidth": "30rem",
                        "field": "tags",
                        "resizable": "enabled",
                        "template": "tagsTemplate"},
@@ -169,7 +170,7 @@
               <oj-if test="[[tagFieldKey() !== cell.key]]">
                 <oj-bind-for-each data="[[$current.data]]">
                   <template>
-                    <span class="oj-badge oj-badge-danger oj-badge-subtle"><oj-bind-text value="[[$current.data.name]]"></oj-bind-text></span>
+                    <span class="oj-badge" :class="[[getClassBasedOnName($current.data.name)]]"><oj-bind-text value="[[$current.data.name]]"></oj-bind-text></span>
                   </template>
                 </oj-bind-for-each>
                 <oj-button id="icon_button1" display="icons" class="oj-button-sm" on-oj-action="[[() => {enableTagEdit(cell)}]]"

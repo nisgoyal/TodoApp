@@ -68,4 +68,8 @@ public class TaskService {
 
         return false;
     }
+
+    public List<Task> getTasksByTag(String tag) {
+        return taskRepository.getTasksByTag(tag);
+    }
 }

@@ -46,4 +46,9 @@ public class TaskController {
         return new ResponseEntity<>("Task not found", HttpStatus.NOT_FOUND);
 
     }
+
+    @GetMapping("/searchTag/{tag}")
+    public ResponseEntity<List<Task>> getTasksByTag(@PathVariable String tag) {
+        return ResponseEntity.ok(this.taskService.getTasksByTag(tag));
+    }
 }

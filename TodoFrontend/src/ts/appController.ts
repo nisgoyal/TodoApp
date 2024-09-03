@@ -68,6 +68,8 @@ class RootViewModel {
     tagArray: ko.ObservableArray<any>;
     tagDataProvider: ArrayDataProvider<any, any>;
 
+    searchType: ko.Observable<string>;
+
 
     constructor() {
 
@@ -97,6 +99,9 @@ class RootViewModel {
         this.tagFieldValue = ko.observableArray();
 
 
+        this.searchType = ko.observable("normalSearch");
+
+
         this.restServerURLTags = "http://localhost:8080/tag";
         this.tagArray = ko.observableArray();
         this.tagDataProvider = new ArrayDataProvider(this.tagArray, {
@@ -115,19 +120,24 @@ class RootViewModel {
             this.filteredDataArray(this.dataArray());
         }
         else {
-            this.filteredDataArray(ko.utils.arrayFilter(this.dataArray(), (task: taskItems) => {
-
-                let presentInTag = false;
-                task.tags.forEach((tag: tagItem) => {
-                    if (tag.name.includes(this.searchValue() as string)) {
-                        presentInTag = true;
+            if (this.searchType() === "normalSearch") {
+                this.filteredDataArray(ko.utils.arrayFilter(this.dataArray(), (task: taskItems) => {
+                    return task.title.includes(this.searchValue() as string) ||
+                        task.description.includes(this.searchValue() as string) ||
+                        task.id.toString().includes(this.searchValue() as string);
+                }));
+            }
+            else {
+                fetch(
+                    this.restServerURLTasks +`/searchTag/${this.searchValue()}`,  
+                ).then(res => {
+                    if(res.ok) {
+                        res.json().then((resJson) => {
+                            this.filteredDataArray(resJson);
+                        });
                     }
-                });
-
-                return presentInTag || task.title.includes(this.searchValue() as string) ||
-                    task.description.includes(this.searchValue() as string) ||
-                    task.id.toString().includes(this.searchValue() as string);
-            }));
+                })
+            }
         }
     }
 
@@ -404,6 +414,7 @@ class RootViewModel {
                             ...row,
                         }
                     );
+                    this.fetchTags();
                 }
                 else {
                     console.log("Error updating tags!");

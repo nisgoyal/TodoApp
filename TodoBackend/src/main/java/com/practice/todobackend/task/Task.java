@@ -5,6 +5,7 @@ import com.practice.todobackend.tag.Tag;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,15 @@ public class Task {
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
+
+    public Task(Long id, String title, String description, String dueDate, Set<Tag> tags) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.tags = tags;
+    }
+
 
     public Task() {}
 

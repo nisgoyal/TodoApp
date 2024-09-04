@@ -115,6 +115,10 @@ class RootViewModel {
         this.searchValue.subscribe(this.filterTaskTable);
         this.dataArray.subscribe(this.filterTaskTable);
     }
+
+    toUTCString = (dateTimeStr: string) => {
+        return new Date(dateTimeStr).toUTCString();
+    }
     
     getClassBasedOnName = (name: string) => {
         let possibleClasses = [

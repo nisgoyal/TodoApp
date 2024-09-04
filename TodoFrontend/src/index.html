@@ -69,36 +69,41 @@
 
       <div class="oj-flex">
 
-        <oj-combobox-one value="{{searchType}}" label-hint="Search Type" label-edge="inside">
+        <oj-combobox-one value="{{searchType}}" label-edge="inside" aria-label="tempLabel"
+          class="oj-lg-margin-1x oj-form-control-max-width-sm"
+        >
           <oj-option value="normalSearch">Normal Search</oj-option>
           <oj-option value="searchByTag">Search By Tag</oj-option>
         </oj-combobox-one>
 
         <oj-input-search
           id="search"
-          class="oj-form-control-max-width-md"
+          class="oj-form-control-max-width-md oj-lg-margin-1x-vertical"
           value="{{searchValue}}"
           raw-value="{{searchRawValue}}"
           placeholder="Search..."
-          aria-label="My search field">
+          aria-label="My search field"
+          >
         </oj-input-search>
 
         <oj-button
-          class="oj-sm-margin-1x"
+          class="oj-lg-margin-1x"
           id="addButton"
-          display="icons"
-          chroming="solid"
+          display="all"
+          chroming="callToAction"
           on-oj-action="[[showAddDialog]]">
+            <span slot="startIcon" class="oj-ux-ico-plus-circle"></span>
             Add Task
         </oj-button>
         
         <oj-button
-          class="oj-sm-margin-1x"
+          class="oj-lg-margin-1x-vertical"
           id="deleteButton"
-          display="icons"
-          chroming="solid"
+          display="all"
+          chroming="callToAction"
           on-oj-action="[[deleteSelectedRows]]"
           >
+          <span slot="startIcon" class="oj-ux-ico-delete-all"></span>
             Delete Tasks
         </oj-button>
       </div>
@@ -129,7 +134,9 @@
                        "headerClassName": "oj-md-down-hide",
                        "className": "oj-md-down-hide",
                        "resizable": "enabled",
-                       "id": "dueDate"},
+                       "id": "dueDate",
+                       "template": "dueDateTemplate",
+                       "minWidth": "18rem"},
                        {"headerText": "Tags", 
                        "headerClassName": "oj-md-down-hide",
                        "className": "oj-md-down-hide",
@@ -144,6 +151,10 @@
                        "id": "action",
                        "template": "actionTemplate"}]'
             class="demo-table-container">
+
+            <template slot="dueDateTemplate" data-oj-as="cell">
+              <oj-bind-text value="[[toUTCString($current.data)]]"></oj-bind-text>
+            </template>
 
             <template slot="actionTemplate" data-oj-as="cell">
               <oj-menu-button id="menuButton5" display="icons" chroming="borderless">
@@ -180,11 +191,11 @@
               </oj-if>
               <oj-if test="[[tagFieldKey() === cell.key]]">
                 <div class="oj-flex">
-                  <div class="oj-sm-6 oj-md-12 oj-lg-9 oj-flex-item">
+                  <div class="oj-flex-item">
                     <oj-combobox-many
                       id="combobox"
                       class="tagCombobox"
-                      label-hint="tag"
+                      aria-label="tags"
                       value="{{tagFieldValue}}"
                       options="[[tagDataProvider]]">
                     </oj-combobox-many>

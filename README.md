@@ -6,16 +6,16 @@ Java, SpringBoot, JPA, OracleDB (configuration can be found in `./TodoBackend/sr
 ### Frontend
 Ojet, Typescript, Javascript
 
-#### Frontend Features
-##### Homeopage
+## Frontend Features
+### Homeopage
 ![Todo Homepage](./images/todo_homepage.png)
-##### Add Task
+### Add Task
 ![Add Task](./images/todo_addtask.png)
-##### Edit Task
+### Edit Task
 ![Edit Task](./images/todo_edittask.png)
-##### Add Custom Tags
+### Add Custom Tags
 ![Custom Tags](./images/todo_tags.png)
-##### Search
+### Search
 You can use two types of search
 - Normal Search - Search based on id, title or description
 - Tag Search - Search based on tag (calls api with custom query).

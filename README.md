@@ -7,7 +7,7 @@ Java, SpringBoot, JPA, OracleDB (configuration can be found in `./TodoBackend/sr
 Ojet, Typescript, Javascript
 
 ## Frontend Features
-### Homeopage
+### Homepage
 ![Todo Homepage](./images/todo_homepage.png)
 ### Add Task
 ![Add Task](./images/todo_addtask.png)
